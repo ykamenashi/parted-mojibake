@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+REQUIERED_EXECUTABLES="nkf"
+RETCD=$(command -v $REQUIERED_EXECUTABLES)
+if [ $? -ne 0 ] ; then
+  echo "$REQUIERED_EXECUTABLES : Not found. This is must."
+  exit 255
+fi
+
+if [ -p /dev/stdin ] ; then
+	MOJIBAKE_SRC_STRING=$(cat -)
+elif [ $# -lt 1 ] ; then
+  echo -n '> '
+  read MOJIBAKE_SRC_STRING
+else
+  if [ -f "$1" ] ; then
+    MOJIBAKE_SRC_STRING=$(cat $1)
+  else
+    echo 'usage: '$0' { non-argument, or 1 text file, UTF-8 Japanese Encoded }'
+    exit 254
+  fi
+fi
+
+echo $MOJIBAKE_SRC_STRING | nkf -S | nkf -s
+exit 0
+
